@@ -1,0 +1,19 @@
+{
+  "name": "tes",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoreBinusAso/ZoeApp.git"
+  },
+  "author": "core.binusaso@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CoreBinusAso/ZoeApp/issues"
+  },
+  "homepage": "https://github.com/CoreBinusAso/ZoeApp#readme",
+  "description": ""
+}
