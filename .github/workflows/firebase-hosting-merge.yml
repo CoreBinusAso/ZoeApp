@@ -3,7 +3,7 @@ name: Deploy to Firebase Hosting on Merge
 on:
   push:
     branches:
-      - master  # Change this to your default branch name
+      - master  # Change this to your default branch name if necessary
 
 jobs:
   build:
@@ -12,6 +12,14 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'  # Specify the Node.js version you need
+
+    - name: Install Firebase CLI
+      run: npm install -g firebase-tools
 
     - name: Deploy to Firebase Hosting
       env:
