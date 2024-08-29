@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "default": "zoeapp-fdf06",
+    "staging": "zoeapp-fdf06"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}
