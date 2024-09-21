@@ -115,25 +115,37 @@
         // Fetch and display plant data from all entries
         ref.once('value')
             .then(function(snapshot) {
+                console.log('Firebase Data Snapshot:', snapshot.val()); // Log the full data snapshot
+
                 var rows = ''; // Create a string to store all rows
 
                 snapshot.forEach(function(childSnapshot) {
                     var plantEntries = childSnapshot.val();
 
+                    // Log child snapshot for each iteration
+                    console.log('Child Snapshot:', childSnapshot.val());
+
                     // Iterate over each plant entry
                     for (let dateKey in plantEntries) {
+                        console.log('Date Key:', dateKey); // Log each date key
                         for (let timeKey in plantEntries[dateKey]) {
+                            console.log('Time Key:', timeKey); // Log each time key
                             var plantData = plantEntries[dateKey][timeKey];
 
-                            // Handle missing data with 'N/A'
+                            // Log individual fields of plantData
                             var donor = plantData.donatur || 'N/A';
                             var inputter = plantData.inputer || 'N/A';
                             var location = plantData.lokasi || 'N/A';
                             var date = plantData.tanggal || 'N/A';
                             var height = plantData.tinggi || 'N/A';
-
-                            // Properly replace backslashes in the image URL
                             var imgUrl = plantData.foto ? plantData.foto.replace(/\\/g, '/') : 'https://via.placeholder.com/100'; 
+
+                            console.log('Donor:', donor); // Log donor
+                            console.log('Inputter:', inputter); // Log inputter
+                            console.log('Location:', location); // Log location
+                            console.log('Date:', date); // Log date
+                            console.log('Height:', height); // Log height
+                            console.log('Image URL:', imgUrl); // Log image URL
 
                             // Create the new table row
                             rows += `
