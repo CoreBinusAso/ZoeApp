@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zoe</title>
+    <title>Zoe Database</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -110,59 +110,39 @@
     <script>
         // Reference the Firebase Realtime Database
         var database = firebase.database();
-        var ref = database.ref('/'); // Reference the root of your database
+        var ref = database.ref('/');
 
-        // Fetch and display plant data from all entries
+        // Fetch and display plant data
         ref.once('value')
             .then(function(snapshot) {
-                console.log('Firebase Data Snapshot:', snapshot.val()); // Log the full data snapshot
+                var rows = '';
+                snapshot.forEach(function(kirai1Snapshot) {
+                    kirai1Snapshot.child('2024').forEach(function(monthSnapshot) {
+                        monthSnapshot.forEach(function(daySnapshot) {
+                            daySnapshot.forEach(function(entrySnapshot) {
+                                var plantData = entrySnapshot.val();
+                                
+                                var donor = plantData.donatur || 'N/A';
+                                var inputter = plantData.inputer || 'N/A';
+                                var location = plantData.lokasi || 'N/A';
+                                var date = plantData.tanggal || 'N/A';
+                                var height = plantData.tinggi || 'N/A';
+                                var imgUrl = plantData.foto ? plantData.foto.replace(/\\/g, '/') : 'https://via.placeholder.com/100';
 
-                var rows = ''; // Create a string to store all rows
-
-                snapshot.forEach(function(childSnapshot) {
-                    var plantEntries = childSnapshot.val();
-
-                    // Log child snapshot for each iteration
-                    console.log('Child Snapshot:', childSnapshot.val());
-
-                    // Iterate over each plant entry
-                    for (let dateKey in plantEntries) {
-                        console.log('Date Key:', dateKey); // Log each date key
-                        for (let timeKey in plantEntries[dateKey]) {
-                            console.log('Time Key:', timeKey); // Log each time key
-                            var plantData = plantEntries[dateKey][timeKey];
-
-                            // Log individual fields of plantData
-                            var donor = plantData.donatur || 'N/A';
-                            var inputter = plantData.inputer || 'N/A';
-                            var location = plantData.lokasi || 'N/A';
-                            var date = plantData.tanggal || 'N/A';
-                            var height = plantData.tinggi || 'N/A';
-                            var imgUrl = plantData.foto ? plantData.foto.replace(/\\/g, '/') : 'https://via.placeholder.com/100'; 
-
-                            console.log('Donor:', donor); // Log donor
-                            console.log('Inputter:', inputter); // Log inputter
-                            console.log('Location:', location); // Log location
-                            console.log('Date:', date); // Log date
-                            console.log('Height:', height); // Log height
-                            console.log('Image URL:', imgUrl); // Log image URL
-
-                            // Create the new table row
-                            rows += `
-                                <tr>
-                                    <td><img src="${imgUrl}" alt="Plant Image"></td>
-                                    <td>${donor}</td>
-                                    <td>${inputter}</td>
-                                    <td>${location}</td>
-                                    <td>${date}</td>
-                                    <td>${height}</td>
-                                </tr>
-                            `;
-                        }
-                    }
+                                rows += `
+                                    <tr>
+                                        <td><img src="${imgUrl}" alt="Plant Image"></td>
+                                        <td>${donor}</td>
+                                        <td>${inputter}</td>
+                                        <td>${location}</td>
+                                        <td>${date}</td>
+                                        <td>${height}</td>
+                                    </tr>
+                                `;
+                            });
+                        });
+                    });
                 });
-
-                // Append all rows to the table body at once
                 document.getElementById('plantDataTable').innerHTML = rows;
             })
             .catch(function(error) {
