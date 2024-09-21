@@ -116,36 +116,41 @@
         ref.once('value')
             .then(function(snapshot) {
                 console.log("Snapshot: ", snapshot.val()); // Log the entire snapshot
+
+                var tableBody = document.getElementById('plantDataTable');
+                tableBody.innerHTML = ''; // Clear the table body before appending new data
+
                 snapshot.forEach(function(childSnapshot) {
                     var plantEntries = childSnapshot.val();
                     console.log("Plant Entries: ", plantEntries); // Log plant entries
 
                     // Iterate over the specific plants in each section
-                    for (let dateKey in plantEntries) {
-                        for (let timeKey in plantEntries[dateKey]) {
-                            var plantData = plantEntries[dateKey][timeKey];
-                            console.log("Plant Data: ", plantData); // Log each plant data
-                    
-                            // Clean the image URL if it exists
-                            var imgUrl = plantData.foto ? plantData.foto.replace(/\\/g, '') : 'default-image-url.jpg'; // Replace with a default image URL if needed
-                    
-                            // Create a new row in the table for each plant record
-                            var newRow = `
-                                <tr>
-                                    <td><img src="${imgUrl}" alt="Tree Image"></td>
-                                    <td>${plantData.donatur}</td>
-                                    <td>${plantData.inputer}</td>
-                                    <td>${plantData.lokasi}</td>
-                                    <td>${plantData.tanggal}</td>
-                                    <td>${plantData.tinggi}</td>
-                                </tr>
-                            `;
-                    
-                            // Append the new row to the table body
-                            document.getElementById('plantDataTable').innerHTML += newRow;
-                        }
-                    }
+                    Object.keys(plantEntries).forEach(function(dateKey) {
+                        var dateEntry = plantEntries[dateKey];
 
+                        Object.keys(dateEntry).forEach(function(timeKey) {
+                            var plantData = dateEntry[timeKey];
+                            console.log("Plant Data: ", plantData); // Log each plant data
+
+                            // Clean the image URL if it exists
+                            var imgUrl = plantData.foto ? plantData.foto.replace(/\\/g, '') : 'https://via.placeholder.com/100'; // Use a placeholder image if the URL is missing
+
+                            // Create a new row in the table for each plant record
+                            var newRow = document.createElement('tr');
+
+                            newRow.innerHTML = `
+                                <td><img src="${imgUrl}" alt="Tree Image"></td>
+                                <td>${plantData.donatur || 'N/A'}</td>
+                                <td>${plantData.inputer || 'N/A'}</td>
+                                <td>${plantData.lokasi || 'N/A'}</td>
+                                <td>${plantData.tanggal || 'N/A'}</td>
+                                <td>${plantData.tinggi || 'N/A'}</td>
+                            `;
+
+                            // Append the new row to the table body
+                            tableBody.appendChild(newRow);
+                        });
+                    });
                 });
             })
             .catch(function(error) {
