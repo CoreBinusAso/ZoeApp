@@ -1,9 +1,9 @@
-name: Deploy to Firebase Hosting on Merge
+name: Deploy to Firebase Hosting on Push
 
 on:
   push:
     branches:
-      - master  # Change this to your default branch name if necessary
+      - main  # Change this to your default branch name
 
 jobs:
   build:
@@ -16,26 +16,19 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '18'  # Specify the Node.js version you need
+        node-version: '14'  # Or the version you are using
 
-    - name: Install Firebase CLI
-      run: npm install -g firebase-tools
-
-    - name: Install jq
-      run: sudo apt-get install jq
-
-    - name: Add new site to firebase.json
+    - name: Install dependencies
       run: |
-        # Detect new folder (e.g., kirai1)
-        NEW_SITE=$(ls public | grep kirai) # Example: kirai1
-        # Update firebase.json to include the new site
-        echo "Updating firebase.json with new site: $NEW_SITE"
-        jq --arg site "$NEW_SITE" '.hosting += [{"target": $site, "public": ("public/" + $site), "ignore": ["firebase.json", "/.", "/node_modules/*"]}]' firebase.json > temp.json && mv temp.json firebase.json
-        git add firebase.json
-        git commit -m "Added new site $NEW_SITE to firebase.json"
-        git push
+        cd your-subdirectory  # Navigate to the directory containing package.json
+        npm install
+
+    - name: Build project
+      run: |
+        cd your-subdirectory  # Navigate again if needed
+        npm run build  # Only if your project requires a build step
 
     - name: Deploy to Firebase Hosting
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      run: firebase deploy --only hosting
+      run: firebase deploy --only hosting
