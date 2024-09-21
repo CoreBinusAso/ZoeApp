@@ -125,10 +125,10 @@
                         for (let timeKey in plantEntries[dateKey]) {
                             var plantData = plantEntries[dateKey][timeKey];
                             console.log("Plant Data: ", plantData); // Log each plant data
-
-                            // Clean the image URL
-                            var imgUrl = plantData.foto.replace(/\\/g, '');
-
+                    
+                            // Clean the image URL if it exists
+                            var imgUrl = plantData.foto ? plantData.foto.replace(/\\/g, '') : 'default-image-url.jpg'; // Replace with a default image URL if needed
+                    
                             // Create a new row in the table for each plant record
                             var newRow = `
                                 <tr>
@@ -140,11 +140,12 @@
                                     <td>${plantData.tinggi}</td>
                                 </tr>
                             `;
-
+                    
                             // Append the new row to the table body
                             document.getElementById('plantDataTable').innerHTML += newRow;
                         }
                     }
+
                 });
             })
             .catch(function(error) {
