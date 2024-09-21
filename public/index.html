@@ -112,6 +112,11 @@
         var database = firebase.database();
         var ref = database.ref('/'); // Reference the root of your database
 
+        // Function to clean up string data (remove unwanted slashes or quotes)
+        function cleanData(data) {
+            return data ? data.replace(/[\\"]/g, '') : 'N/A'; // Remove backslashes and double quotes
+        }
+
         // Fetch and display plant data from all entries
         ref.once('value')
             .then(function(snapshot) {
@@ -133,19 +138,19 @@
                             console.log("Plant Data: ", plantData); // Log each plant data
 
                             // Clean the image URL if it exists
-                            var imgUrl = plantData.foto ? plantData.foto.replace(/\\/g, '') : 'https://via.placeholder.com/100'; // Use a placeholder image if the URL is missing
+                            var imgUrl = plantData.foto ? cleanData(plantData.foto) : 'https://via.placeholder.com/100'; // Use a placeholder image if the URL is missing
 
                             // Create a new row in the table for each plant record
                             var newRow = document.createElement('tr');
 
-                            // Update the donor, inputter, and other fields properly
+                            // Update the donor, inputter, and other fields properly using the cleanData function
                             newRow.innerHTML = `
                                 <td><img src="${imgUrl}" alt="Tree Image"></td>
-                                <td>${plantData.donatur || 'N/A'}</td>
-                                <td>${plantData.inputer || 'N/A'}</td>
-                                <td>${plantData.lokasi || 'N/A'}</td>
-                                <td>${plantData.tanggal || 'N/A'}</td>
-                                <td>${plantData.tinggi || 'N/A'}</td>
+                                <td>${cleanData(plantData.donatur)}</td>
+                                <td>${cleanData(plantData.inputer)}</td>
+                                <td>${cleanData(plantData.lokasi)}</td>
+                                <td>${cleanData(plantData.tanggal)}</td>
+                                <td>${cleanData(plantData.tinggi)}</td>
                             `;
 
                             // Append the new row to the table body
