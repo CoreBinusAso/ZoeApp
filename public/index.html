@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Green Themed Website</title>
+    <title>Zoe</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,21 +36,114 @@
         p {
             margin: 0 0 10px 0;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #004d40;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #004d40;
+            color: white;
+        }
+        td img {
+            width: 100px;
+            height: auto;
+        }
     </style>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js"></script>
+
+    <script>
+        // Your Firebase configuration
+        var firebaseConfig = {
+          apiKey: "AIzaSyC2Gh0QTmawv5GXJR_EygmrYpxYLgwc4X8",
+          authDomain: "zoeapp-fdf06.firebaseapp.com",
+          databaseURL: "https://zoeapp-fdf06-default-rtdb.firebaseio.com",
+          projectId: "zoeapp-fdf06",
+          storageBucket: "zoeapp-fdf06.appspot.com",
+          messagingSenderId: "302798178167",
+          appId: "1:302798178167:web:14612f87faa0dd15934372",
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
 </head>
 <body>
     <header>
-        <h1>Welcome to My Green Website</h1>
+        <h1>Welcome to Zoe Databasee</h1>
     </header>
 
     <main>
-        <h2>About This Website</h2>
-        <p>This is a simple example of a webpage styled with green colors. The website includes a header, main content area, and a footer.</p>
-        <p>The colors used are various shades of green to give the site a consistent theme.</p>
+        <h2>Plant Data</h2>
+        <!-- Table to display all records -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Donor</th>
+                    <th>Inputter</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Height (meters)</th>
+                </tr>
+            </thead>
+            <tbody id="plantDataTable">
+                <!-- Data will be dynamically inserted here -->
+            </tbody>
+        </table>
     </main>
 
     <footer>
-        <p>&copy; 2024 Green Themed Website</p>
+        <p>&copy; Zoe Website</p>
     </footer>
+
+    <!-- JavaScript to fetch and display Firebase data -->
+    <script>
+        // Reference the Firebase Realtime Database
+        var database = firebase.database();
+        var ref = database.ref('/'); // Reference the root of your database
+
+        // Fetch and display plant data from all entries
+        ref.once('value', function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                var plantEntries = childSnapshot.val();
+                
+                // Iterate over the specific plants in each section (like "kirai1")
+                for (let dateKey in plantEntries) {
+                    for (let timeKey in plantEntries[dateKey]) {
+                        var plantData = plantEntries[dateKey][timeKey];
+
+                        // Clean the image URL
+                        var imgUrl = plantData.foto.replace(/\\/g, '');
+                        
+                        // Create a new row in the table for each plant record
+                        var newRow = `
+                            <tr>
+                                <td><img src="${imgUrl}" alt="Tree Image"></td>
+                                <td>${plantData.donatur}</td>
+                                <td>${plantData.inputer}</td>
+                                <td>${plantData.lokasi}</td>
+                                <td>${plantData.tanggal}</td>
+                                <td>${plantData.tinggi}</td>
+                            </tr>
+                        `;
+                        
+                        // Append the new row to the table body
+                        document.getElementById('plantDataTable').innerHTML += newRow;
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
