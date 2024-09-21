@@ -112,55 +112,49 @@
         var database = firebase.database();
         var ref = database.ref('/'); // Reference the root of your database
 
-        // Function to clean up string data (remove unwanted slashes or quotes)
-        function cleanData(data) {
-            return data ? data.replace(/[\\"]/g, '') : 'N/A'; // Remove backslashes and double quotes
-        }
-
         // Fetch and display plant data from all entries
         ref.once('value')
             .then(function(snapshot) {
-                console.log("Snapshot: ", snapshot.val()); // Log the entire snapshot
-
-                var tableBody = document.getElementById('plantDataTable');
-                tableBody.innerHTML = ''; // Clear the table body before appending new data
+                var rows = ''; // Create a string to store all rows
 
                 snapshot.forEach(function(childSnapshot) {
                     var plantEntries = childSnapshot.val();
-                    console.log("Plant Entries: ", plantEntries); // Log plant entries
 
-                    // Iterate over the specific plants in each section
-                    Object.keys(plantEntries).forEach(function(dateKey) {
-                        var dateEntry = plantEntries[dateKey];
+                    // Iterate over each plant entry
+                    for (let dateKey in plantEntries) {
+                        for (let timeKey in plantEntries[dateKey]) {
+                            var plantData = plantEntries[dateKey][timeKey];
 
-                        Object.keys(dateEntry).forEach(function(timeKey) {
-                            var plantData = dateEntry[timeKey];
-                            console.log("Plant Data: ", plantData); // Log each plant data
+                            // Handle missing data with 'N/A'
+                            var donor = plantData.donatur || 'N/A';
+                            var inputter = plantData.inputer || 'N/A';
+                            var location = plantData.lokasi || 'N/A';
+                            var date = plantData.tanggal || 'N/A';
+                            var height = plantData.tinggi || 'N/A';
 
-                            // Clean the image URL if it exists
-                            var imgUrl = plantData.foto ? cleanData(plantData.foto) : 'https://via.placeholder.com/100'; // Use a placeholder image if the URL is missing
+                            // Properly replace backslashes in the image URL
+                            var imgUrl = plantData.foto ? plantData.foto.replace(/\\/g, '/') : 'https://via.placeholder.com/100'; 
 
-                            // Create a new row in the table for each plant record
-                            var newRow = document.createElement('tr');
-
-                            // Update the donor, inputter, and other fields properly using the cleanData function
-                            newRow.innerHTML = `
-                                <td><img src="${imgUrl}" alt="Tree Image"></td>
-                                <td>${cleanData(plantData.donatur)}</td>
-                                <td>${cleanData(plantData.inputer)}</td>
-                                <td>${cleanData(plantData.lokasi)}</td>
-                                <td>${cleanData(plantData.tanggal)}</td>
-                                <td>${cleanData(plantData.tinggi)}</td>
+                            // Create the new table row
+                            rows += `
+                                <tr>
+                                    <td><img src="${imgUrl}" alt="Plant Image"></td>
+                                    <td>${donor}</td>
+                                    <td>${inputter}</td>
+                                    <td>${location}</td>
+                                    <td>${date}</td>
+                                    <td>${height}</td>
+                                </tr>
                             `;
-
-                            // Append the new row to the table body
-                            tableBody.appendChild(newRow);
-                        });
-                    });
+                        }
+                    }
                 });
+
+                // Append all rows to the table body at once
+                document.getElementById('plantDataTable').innerHTML = rows;
             })
             .catch(function(error) {
-                console.error("Error fetching data: ", error); // Log any errors
+                console.error("Error fetching data: ", error);
             });
     </script>
 </body>
