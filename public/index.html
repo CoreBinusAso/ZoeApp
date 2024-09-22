@@ -3,157 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zoe Database</title>
+    <title>ZoeApp</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-        header {
-            background-color: #333;
-            color: #ffffff;
-            padding: 10px 20px;
-            text-align: center;
-        }
-        main {
-            padding: 20px;
-        }
-        footer {
-            background-color: #333;
-            color: #ffffff;
-            text-align: center;
-            padding: 10px 20px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-        h1, h2 {
-            color: #666;
-        }
-        p {
-            margin: 0 0 10px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table, th, td {
-            border: 1px solid #333;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #333;
-            color: white;
-        }
-        td img {
-            width: 100px;
-            height: auto;
-        }
+        /* Your CSS styling */
     </style>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js"></script>
-
+    <!-- Tambahkan Firebase SDK di sini -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js"></script>
+    
+    <!-- Script untuk menginisialisasi Firebase -->
     <script>
-        // Your Firebase configuration
-        var firebaseConfig = {
-            apiKey: "AIzaSyC2Gh0QTmawv5GXJR_EygmrYpxYLgwc4X8",
-            authDomain: "zoeapp-fdf06.firebaseapp.com",
-            databaseURL: "https://zoeapp-fdf06-default-rtdb.firebaseio.com",
-            projectId: "zoeapp-fdf06",
-            storageBucket: "zoeapp-fdf06.appspot.com",
-            messagingSenderId: "302798178167",
-            appId: "1:302798178167:web:14612f87faa0dd15934372",
-        };
+      // Konfigurasi Firebase kamu
+      const firebaseConfig = {
+        apiKey: "AIzaSyC2Gh0QTmawv5GXJR_EygmrYpxYLgwc4X8",
+        authDomain: "zoeapp-fdf06.firebaseapp.com",
+        databaseURL: "https://zoeapp-fdf06-default-rtdb.firebaseio.com",
+        projectId: "zoeapp-fdf06",
+        storageBucket: "zoeapp-fdf06.appspot.com",
+        messagingSenderId: "302798178167",
+        appId: "1:302798178167:web:14612f87faa0dd15934372"
+      };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+      // Inisialisasi Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const database = firebase.database(app);
+
+      // Function untuk mengambil data dari Firebase Realtime Database
+      function fetchData() {
+        const ref = database.ref('/');
+        ref.on('value', (snapshot) => {
+          const data = snapshot.val();
+          console.log(data);  // Mengambil data dan menampilkannya di console
+          displayData(data);  // Tampilkan data ke HTML
+        });
+      }
+
+      // Function untuk menampilkan data ke HTML
+      function displayData(data) {
+        const tableBody = document.getElementById("data-table-body");
+        tableBody.innerHTML = ""; // Clear existing data
+
+        // Loop melalui semua bucket (misalnya, Kirai1, Kirai24, dll.)
+        for (const bucketID in data) {
+          const bucketData = data[bucketID];
+
+          // Loop melalui setiap item dalam bucket
+          for (const timestamp in bucketData) {
+            const rowData = bucketData[timestamp];
+
+            // Membuat baris baru untuk tabel
+            const row = `<tr>
+                          <td>${bucketID}</td>  <!-- ID Pohon -->
+                          <td>${timestamp}</td> <!-- Tanggal (tahun, bulan, tanggal dan jam) -->
+                          <td>${rowData.donatur || 'Tidak Ada'}</td>
+                          <td>${rowData.tinggi || 'Tidak Ada'}</td>
+                          <td><a href="${rowData.foto || '#'}" target="_blank">Lihat Gambar</a></td>
+                        </tr>`;
+            tableBody.innerHTML += row;  // Tambahkan baris ke tabel
+          }
+        }
+      }
+
+      // Panggil fetchData saat halaman dimuat
+      window.onload = fetchData;
     </script>
 </head>
 <body>
     <header>
-        <h1>Welcome to Zoe Database</h1>
+        <h1>Data Tanaman ZoeApp</h1>
     </header>
 
     <main>
-        <h2>Plant Data</h2>
-        <table>
+        <h2>List Data Tanaman</h2>
+        <table border="1">
             <thead>
                 <tr>
-                    <th>Image</th>
-                    <th>Donor</th>
-                    <th>Inputter</th>
-                    <th>Location</th>
-                    <th>Date</th>
-                    <th>Height (meters)</th>
+                    <th>ID Pohon</th>
+                    <th>Tanggal</th>
+                    <th>Donatur</th>
+                    <th>Tinggi</th>
+                    <th>Foto</th>
                 </tr>
             </thead>
-            <tbody id="plantDataTable">
-                <!-- Data will be dynamically inserted here -->
+            <tbody id="data-table-body">
+                <!-- Data akan diisi di sini melalui JavaScript -->
             </tbody>
         </table>
     </main>
 
     <footer>
-        <p>&copy; Zoe Website</p>
+        <p>&copy; 2024 ZoeApp</p>
     </footer>
-<script>
-        // Reference the Firebase Realtime Database
-        var database = firebase.database();
-        var ref = database.ref('/');
-
-        // Fetch and display plant data
-        ref.once('value')
-            .then(function(snapshot) {
-                var rows = '';
-                snapshot.forEach(function(kiraiSnapshot) {
-                    console.log('Kirai Entry:', kiraiSnapshot.key); // For debugging
-
-                    // Assuming the structure is Kirai* > year > month > day > entry
-                    kiraiSnapshot.forEach(function(yearSnapshot) {
-                        yearSnapshot.forEach(function(monthSnapshot) {
-                            monthSnapshot.forEach(function(daySnapshot) {
-                                var plantData = daySnapshot.val();
-                                
-                                console.log('Plant Data:', plantData); // For debugging
-
-                                var donor = plantData.donatur || 'N/A';
-                                var inputter = plantData.inputer || 'N/A';
-                                var location = plantData.lokasi || 'N/A';
-                                var date = plantData.tanggal || 'N/A';
-                                var height = plantData.tinggi || 'N/A';
-                                var imgUrl = plantData.foto || 'https://via.placeholder.com/100';
-
-                                // Ensure the image URL is properly formatted
-                                imgUrl = imgUrl.startsWith('http') ? imgUrl : 'https://' + imgUrl.replace(/^\/\//, '');
-
-                                rows += `
-                                    <tr>
-                                        <td><img src="${imgUrl}" alt="Plant Image" onerror="this.src='https://via.placeholder.com/100'" style="max-width: 100px; max-height: 100px;"></td>
-                                        <td>${donor}</td>
-                                        <td>${inputter}</td>
-                                        <td>${location}</td>
-                                        <td>${date}</td>
-                                        <td>${height}</td>
-                                    </tr>
-                                `;
-                            });
-                        });
-                    });
-                });
-                document.getElementById('plantDataTable').innerHTML = rows;
-            })
-            .catch(function(error) {
-                console.error("Error fetching data: ", error);
-            });
-    </script>
 </body>
 </html>
