@@ -49,33 +49,37 @@
       }
 
       // Function to display data in HTML
-      function displayData(data) {
-        const tableBody = document.getElementById("data-table-body");
-        tableBody.innerHTML = ""; // Clear existing data
-        // Loop through all buckets (e.g., Kirai1, Kirai24, etc.)
-        for (const bucketID in data) {
-          const bucketData = data[bucketID];
-          // Loop through each year in the bucket
-          for (const year in bucketData) {
+function displayData(data) {
+    const tableBody = document.getElementById("data-table-body");
+    tableBody.innerHTML = ""; // Clear existing data
+    // Loop through all buckets (e.g., Kirai1, Kirai24, etc.)
+    for (const bucketID in data) {
+        const bucketData = data[bucketID];
+        // Loop through each year in the bucket
+        for (const year in bucketData) {
             // Loop through each month in the year
             for (const month in bucketData[year]) {
-              // Loop through each day in the month
-              for (const day in bucketData[year][month]) {
-                const rowData = bucketData[year][month][day];
-                // Create a new row for the table
-                const row = `<tr>
-                              <td>${bucketID}</td>
-                              <td>${year}-${month}-${day}</td>
-                              <td>${rowData.donatur || 'Tidak Ada'}</td>
-                              <td>${rowData.tinggi || 'Tidak Ada'}</td>
-                              <td><a href="${rowData.foto || '#'}" target="_blank">Lihat Gambar</a></td>
-                            </tr>`;
-                tableBody.innerHTML += row;  // Add row to table
-              }
+                // Loop through each day in the month
+                for (const day in bucketData[year][month]) {
+                    const rowData = bucketData[year][month][day];
+                    
+                    // Clean the foto URL by removing escaped characters if necessary
+                    let fotoUrl = rowData.foto ? rowData.foto.replace(/\\/g, '') : '#';
+
+                    // Create a new row for the table
+                    const row = `<tr>
+                                    <td>${bucketID}</td>
+                                    <td>${year}-${month}-${day}</td>
+                                    <td>${rowData.donatur || 'Tidak Ada'}</td>
+                                    <td>${rowData.tinggi || 'Tidak Ada'}</td>
+                                    <td><a href="${fotoUrl}" target="_blank">Lihat Gambar</a></td>
+                                </tr>`;
+                    tableBody.innerHTML += row;  // Add row to table
+                }
             }
-          }
         }
-      }
+    }
+}
 
       // Call fetchData when the page loads
       window.onload = fetchData;
