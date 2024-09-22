@@ -5,99 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZoeApp</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
+        /* Your CSS styling */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid black;
             padding: 8px;
             text-align: left;
         }
         th {
             background-color: #f2f2f2;
         }
-        img {
-            max-width: 100px;
-            max-height: 100px;
-        }
     </style>
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js"></script>
-
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyC2Gh0QTmawv5GXJR_EygmrYpxYLgwc4X8",
-            authDomain: "zoeapp-fdf06.firebaseapp.com",
-            databaseURL: "https://zoeapp-fdf06-default-rtdb.firebaseio.com",
-            projectId: "zoeapp-fdf06",
-            storageBucket: "zoeapp-fdf06.appspot.com",
-            messagingSenderId: "302798178167",
-            appId: "1:302798178167:web:14612f87faa0dd15934372"
-        };
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyC2Gh0QTmawv5GXJR_EygmrYpxYLgwc4X8",
+        authDomain: "zoeapp-fdf06.firebaseapp.com",
+        databaseURL: "https://zoeapp-fdf06-default-rtdb.firebaseio.com",
+        projectId: "zoeapp-fdf06",
+        storageBucket: "zoeapp-fdf06.appspot.com",
+        messagingSenderId: "302798178167",
+        appId: "1:302798178167:web:14612f87faa0dd15934372"
+      };
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const database = firebase.database(app);
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
+      // Function to fetch data from Firebase Realtime Database
+      function fetchData() {
+        const ref = database.ref('/');
+        ref.on('value', (snapshot) => {
+          const data = snapshot.val();
+          console.log(data);  // Log data to console
+          displayData(data);  // Display data in HTML
+        });
+      }
 
-        // Reference the Firebase Realtime Database
-        var database = firebase.database();
-        var ref = database.ref('/');
-
-        // Fetch and display plant data
-        function fetchAndDisplayData() {
-            ref.once('value')
-                .then(function(snapshot) {
-                    var rows = '';
-                    snapshot.forEach(function(kiraiSnapshot) {
-                        console.log('Kirai Entry:', kiraiSnapshot.key); // For debugging
-                        kiraiSnapshot.forEach(function(yearSnapshot) {
-                            yearSnapshot.forEach(function(monthSnapshot) {
-                                monthSnapshot.forEach(function(daySnapshot) {
-                                    var plantData = daySnapshot.val();
-                                    
-                                    console.log('Plant Data:', plantData); // For debugging
-
-                                    var donor = plantData.donatur || 'N/A';
-                                    var inputter = plantData.inputer || 'N/A';
-                                    var location = plantData.lokasi || 'N/A';
-                                    var date = plantData.tanggal || 'N/A';
-                                    var height = plantData.tinggi || 'N/A';
-                                    var imgUrl = plantData.foto || 'https://via.placeholder.com/100';
-
-                                    // Ensure the image URL is properly formatted
-                                    imgUrl = imgUrl.startsWith('http') ? imgUrl : 'https://' + imgUrl.replace(/^\/\//, '');
-
-                                    rows += `
-                                        <tr>
-                                            <td><img src="${imgUrl}" alt="Plant Image" onerror="this.src='https://via.placeholder.com/100'"></td>
-                                            <td>${donor}</td>
-                                            <td>${inputter}</td>
-                                            <td>${location}</td>
-                                            <td>${date}</td>
-                                            <td>${height}</td>
-                                        </tr>
-                                    `;
-                                });
-                            });
-                        });
-                    });
-                    document.getElementById('plantDataTable').innerHTML = rows;
-                })
-                .catch(function(error) {
-                    console.error("Error fetching data: ", error);
-                });
+      // Function to display data in HTML
+      function displayData(data) {
+        const tableBody = document.getElementById("data-table-body");
+        tableBody.innerHTML = ""; // Clear existing data
+        // Loop through all buckets (e.g., Kirai1, Kirai24, etc.)
+        for (const bucketID in data) {
+          const bucketData = data[bucketID];
+          // Loop through each year in the bucket
+          for (const year in bucketData) {
+            // Loop through each month in the year
+            for (const month in bucketData[year]) {
+              // Loop through each day in the month
+              for (const day in bucketData[year][month]) {
+                const rowData = bucketData[year][month][day];
+                // Create a new row for the table
+                const row = `<tr>
+                              <td>${bucketID}</td>
+                              <td>${year}-${month}-${day}</td>
+                              <td>${rowData.donatur || 'Tidak Ada'}</td>
+                              <td>${rowData.tinggi || 'Tidak Ada'}</td>
+                              <td><a href="${rowData.foto || '#'}" target="_blank">Lihat Gambar</a></td>
+                            </tr>`;
+                tableBody.innerHTML += row;  // Add row to table
+              }
+            }
+          }
         }
+      }
 
-        // Call fetchAndDisplayData when the page loads
-        window.onload = fetchAndDisplayData;
+      // Call fetchData when the page loads
+      window.onload = fetchData;
     </script>
 </head>
 <body>
@@ -106,19 +87,18 @@
     </header>
     <main>
         <h2>List Data Tanaman</h2>
-        <table>
+        <table border="1">
             <thead>
                 <tr>
-                    <th>Foto</th>
-                    <th>Donatur</th>
-                    <th>Inputter</th>
-                    <th>Lokasi</th>
+                    <th>ID Pohon</th>
                     <th>Tanggal</th>
+                    <th>Donatur</th>
                     <th>Tinggi</th>
+                    <th>Foto</th>
                 </tr>
             </thead>
-            <tbody id="plantDataTable">
-                <!-- Data will be filled here through JavaScript -->
+            <tbody id="data-table-body">
+                <!-- Data akan diisi di sini melalui JavaScript -->
             </tbody>
         </table>
     </main>
