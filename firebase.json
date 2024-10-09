@@ -2,6 +2,7 @@
   "hosting": [
     {
       "target": "site1",
+      "site": "kirai1",  // Replace with your actual site ID for site1
       "public": "public/kirai1",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
@@ -13,6 +14,7 @@
     },
     {
       "target": "site2",
+      "site": "kirai2",  // Replace with your actual site ID for site2
       "public": "public/kirai2",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
