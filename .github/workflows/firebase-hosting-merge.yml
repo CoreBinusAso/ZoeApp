@@ -21,9 +21,11 @@ jobs:
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
-      - name: Run Deployment Script
+      - name: Set up Google Application Credentials
+        run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > ${HOME}/gcloud-key.json
+
+      - name: Deploy to Firebase Hosting
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}  # Your Firebase CI token
+          GOOGLE_APPLICATION_CREDENTIALS: ${HOME}/gcloud-key.json  # Path to your service account key
         run: |
-          chmod +x ./deploy_script.sh  # Make the script executable (if not done earlier)
-          ./deploy_script.sh  # Run the script
+          ./deploy_script.sh  # Run your script to deploy
