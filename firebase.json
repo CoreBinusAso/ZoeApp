@@ -1,8 +1,8 @@
 {
   "hosting": [
     {
-      "target": "site1",
-      "public": "public/site1",
+      "target": "kirai1",
+      "public": "public/kirai1",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
@@ -12,8 +12,8 @@
       ]
     },
     {
-      "target": "site2",
-      "public": "public/site2",
+      "target": "kirai2",
+      "public": "public/kirai2",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
