@@ -24,10 +24,8 @@ jobs:
       - name: Set up Google Application Credentials
         run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > ${HOME}/gcloud-key.json
 
-      - name: Make Deployment Script Executable
-        run: chmod +x ./deploy_script.sh  # Ensure the script is executable
+      - name: Authenticate with Google Cloud
+        run: gcloud auth activate-service-account --key-file=${HOME}/gcloud-key.json
 
       - name: Run Deployment Script
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${HOME}/gcloud-key.json  # Path to your service account key
         run: ./deploy_script.sh  # Run the script
