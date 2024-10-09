@@ -25,6 +25,6 @@ jobs:
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       run: |
-        firebase target:apply hosting kirai1 my-site-1
-        firebase target:apply hosting kirai2 my-site-2
+        firebase target:apply hosting site1 kirai1
+        firebase target:apply hosting site2 kirai2
         firebase deploy --only hosting
