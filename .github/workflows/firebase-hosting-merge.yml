@@ -28,4 +28,4 @@ jobs:
         run: gcloud auth activate-service-account --key-file=${HOME}/gcloud-key.json
 
       - name: Run Deployment Script
-        run: ./deploy_script.sh  # Run the script
+        run: ./deploy_script.sh  # Run your script to deploy
