@@ -27,9 +27,8 @@ jobs:
       - name: Authenticate with Google Cloud
         run: gcloud auth activate-service-account --key-file=${HOME}/gcloud-key.json
 
-      - name: Run Deployment Script
+      - name: Deploy to Firebase Hosting
+        run: |
+          firebase deploy --only hosting
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}  # Your Firebase CI token
-        run: |
-          chmod +x ./deploy_script.sh  # Make the script executable (if not done earlier)
-          ./deploy_script.sh  # Run your script to deploy
