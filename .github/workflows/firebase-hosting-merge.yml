@@ -24,8 +24,10 @@ jobs:
       - name: Set up Google Application Credentials
         run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > ${HOME}/gcloud-key.json
 
-      - name: Deploy to Firebase Hosting
+      - name: Make Deployment Script Executable
+        run: chmod +x ./deploy_script.sh  # Ensure the script is executable
+
+      - name: Run Deployment Script
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${HOME}/gcloud-key.json  # Path to your service account key
-        run: |
-          ./deploy_script.sh  # Run your script to deploy
+        run: ./deploy_script.sh  # Run the script
