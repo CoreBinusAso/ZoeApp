@@ -1,4 +1,4 @@
-name: Deploy to Firebase Hosting on Merge
+name: Deploy to Firebase Hosting
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-     
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -24,4 +24,7 @@ jobs:
     - name: Deploy to Firebase Hosting
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-      run: firebase deploy --only hosting --project zoeapp-fdf06
+      run: |
+        firebase target:apply hosting kirai1 my-site-1
+        firebase target:apply hosting kirai2 my-site-2
+        firebase deploy --only hosting
