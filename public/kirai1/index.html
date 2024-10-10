@@ -3,54 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Green Themed Website</title>
+    <title>ZoeApp</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #e0f2f1; /* Light green background */
-            color: #004d40; /* Dark green text */
-        }
-        header {
-            background-color: #004d40; /* Dark green background */
-            color: #ffffff; /* White text */
-            padding: 10px 20px;
-            text-align: center;
-        }
-        main {
-            padding: 20px;
-        }
-        footer {
-            background-color: #004d40; /* Dark green background */
-            color: #ffffff; /* White text */
-            text-align: center;
-            padding: 10px 20px;
-            position: fixed;
-            bottom: 0;
+        /* Your CSS styling */
+        table {
             width: 100%;
+            border-collapse: collapse;
         }
-        h1, h2 {
-            color: #00796b; /* Medium green */
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
         }
-        p {
-            margin: 0 0 10px 0;
+        th {
+            background-color: #f2f2f2;
         }
     </style>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    
+    <script>
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyC2Gh0QTmawv5GXJR_EygmrYpxYLgwc4X8",
+        authDomain: "zoeapp-fdf06.firebaseapp.com",
+        databaseURL: "https://zoeapp-fdf06-default-rtdb.firebaseio.com",
+        projectId: "zoeapp-fdf06",
+        storageBucket: "zoeapp-fdf06.appspot.com",
+        messagingSenderId: "302798178167",
+        appId: "1:302798178167:web:14612f87faa0dd15934372"
+      };
+      // Initialize Firebase
+      const app = firebase.initializeApp(firebaseConfig);
+      const database = firebase.database(app);
+
+      // Function to fetch data from Firebase Realtime Database
+      function fetchData() {
+        const ref = database.ref('/');
+        ref.on('value', (snapshot) => {
+          const data = snapshot.val();
+          console.log(data);  // Log data to console
+          displayData(data);  // Display data in HTML
+        });
+      }
+
+      // Function to display data in HTML
+      function displayData(data) {
+        const tableBody = document.getElementById("data-table-body");
+        tableBody.innerHTML = ""; // Clear existing data
+        // Loop through all buckets (e.g., Kirai1, Kirai24, etc.)
+        for (const bucketID in data) {
+          const bucketData = data[bucketID];
+          // Loop through each year in the bucket
+          for (const year in bucketData) {
+            // Loop through each month in the year
+            for (const month in bucketData[year]) {
+              // Loop through each day in the month
+              for (const day in bucketData[year][month]) {
+                const rowData = bucketData[year][month][day];
+                // Create a new row for the table
+                const row = `<tr>
+                              <td>${bucketID}</td>
+                              <td>${year}-${month}-${day}</td>
+                              <td>${rowData.donatur || 'Tidak Ada'}</td>
+                              <td>${rowData.tinggi || 'Tidak Ada'}</td>
+                              <td><a href="${rowData.foto || '#'}" target="_blank">Lihat Gambar</a></td>
+                            </tr>`;
+                tableBody.innerHTML += row;  // Add row to table
+              }
+            }
+          }
+        }
+      }
+
+      // Call fetchData when the page loads
+      window.onload = fetchData;
+    </script>
 </head>
 <body>
     <header>
-        <h1>Welcome to My Green Website</h1>
+        <h1>Data Tanaman ZoeApp</h1>
     </header>
-
     <main>
-        <h2>About This Website</h2>
-        <p>This is a simple example of a webpage styled with green colors. The website includes a header, main content area, and a footer.</p>
-        <p>The colors used are various shades of green to give the site a consistent theme.</p>
+        <h2>List Data Tanaman</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID Pohon</th>
+                    <th>Tanggal</th>
+                    <th>Donatur</th>
+                    <th>Tinggi</th>
+                    <th>Foto</th>
+                </tr>
+            </thead>
+            <tbody id="data-table-body">
+                <!-- Data akan diisi di sini melalui JavaScript -->
+            </tbody>
+        </table>
     </main>
-
     <footer>
-        <p>&copy; 2024 Green Themed Website</p>
+        <p>&copy; 2024 ZoeApp</p>
     </footer>
 </body>
 </html>
